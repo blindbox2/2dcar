@@ -1,5 +1,5 @@
 import pygame
-from math import degrees, sin, cos
+from math import degrees, sin, cos, radians
 
 pygame.init()
 
@@ -29,8 +29,8 @@ class rect(object):
         self.middle = middle(self.position, self.width, self.height)
 
     def draw(self, screen):
-        pygame.draw.polygon(screen, color.Blue, self.position, 5)
-        pygame.draw.polygon(screen, color.Blue, next(self.position, self.width, self.height, 5), 5)
+        pygame.draw.polygon(screen, color.Blue, self.position, 2)
+        pygame.draw.polygon(screen, color.Red, next(self.position, self.width, self.height, 45), 2)
 
 
 def draw(screen):  # draws all elements and updates the display
@@ -52,11 +52,12 @@ def next(a, width, height, degree):
     start = a[0]
     test = position(start, width, height)
     rot = rotate(test, degree)
-    dif = abs(rot[3][0] - test[3][0])
+    difx = abs(rot[3][0] - test[0][0])
+    dify = abs(rot[3][1] - test[0][1])
 
-    print(dif)
-    for i in range(3):
-        rot[i][0] += dif
+    for i in range(4):
+        rot[i][0] += difx
+        rot[i][1] -= dify
 
     return rot
 
@@ -76,7 +77,7 @@ def relativePosition(coordinates, middle):
 
 
 def rotate(position, degree):
-    degree = degrees(degree)
+    degree = radians(degree)
     pos = []
     relativeCoordinates = relativePosition(position, track.middle)
     for corner in range(len(relativeCoordinates)):
