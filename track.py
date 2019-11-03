@@ -25,35 +25,43 @@ class track(object):
     def __init__(self):
         self.width = 60
         self.height = 90
-        self.start = [400, 400]
-        self.toDraw = []
+        self.start = [50, 700]
 
-    def draw(self, screen):
-        for rectangle in self.toDraw:
-            pygame.draw.polygon(screen, color.colors[self.toDraw.index(rectangle)], rectangle)
+
+def createTrack():
+    rectangles = [position(track.start)]
+    rectangles.extend(straight(rectangles[len(rectangles) - 1], 'vertical', 3))
+    rectangles.extend(corner(rectangles[len(rectangles) - 1], 180, 'right'))
+    rectangles.extend(straight(rectangles[len(rectangles) - 1], 'vertical', 3))
+    rectangles.extend(corner(rectangles[len(rectangles) - 1], 180, 'right'))
+
+    for rectangle in range(len(rectangles)):
+        pygame.draw.polygon(main.screen, color.Black, rectangles[rectangle])
 
 
 def draw(screen):  # draws all elements and updates the display
     screen.fill(color.White)
-    track.draw(screen)
     pygame.display.update()
 
 
 def straight(start, direction, length):
-    rectangles = [position(start)]
-
-    for rectangle in range(length):
-        if direction == 'horizontal':
-            start = rectangles[rectangle][1]
-        else:
+    if direction == 'vertical':
+        rectangles = [start]
+        for rectangle in range(length - 1):
             start = [rectangles[rectangle][0][0], rectangles[rectangle][0][1] - track.height]
-        rectangles.append(position(start))
-
+            rectangles.append(position(start))
+    else:
+        track.width = 90
+        track.height = 60
+        rectangles = [start]
+        for rectangle in range(length - 1):
+            start = [rectangles[rectangle][0][0] + track.width, rectangles[rectangle][0][1]]
+            rectangles.append(position(start))
     return rectangles
 
 
 def corner(start, degree, direction):
-    rectangles = [position(start)]
+    rectangles = [start]
     numberOfRectangles = int(degree // 22.5)
 
     for rectangle in range(numberOfRectangles):
@@ -118,7 +126,7 @@ def relativePosition(coordinates, centre):
 
 clock = pygame.time.Clock()
 track = track()
-track.toDraw = straight(track.start, 'vertical', 3)
+
 while not main.done:
     dt = clock.tick(10)
 
@@ -127,3 +135,5 @@ while not main.done:
             main.done = True
 
     draw(main.screen)
+    createTrack()
+    pygame.display.update()
